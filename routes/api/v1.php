@@ -10,13 +10,15 @@ use App\Http\Controllers\UserProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->as('api.v1.')->middleware(['throttle:api'])->group(function () {
-    Route::post('/login', [LoginController::class, 'login'])->name('login');
+    Route::prefix('user')->group(function() {
+        Route::post('/login', [LoginController::class, 'login'])->name('login');
 
-    /**
-     * Auth protected routes
-     */
-    Route::middleware(['auth:api'])->group(function () {
-        Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-        Route::get('/profile', UserProfileController::class)->name('profile');
+        /**
+         * Auth protected routes
+         */
+        Route::middleware(['auth:api'])->group(function () {
+            Route::get('/', UserProfileController::class)->name('profile');
+            Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+        });
     });
 });
