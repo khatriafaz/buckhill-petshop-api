@@ -19,7 +19,8 @@ Route::prefix('v1')->as('api.v1.')->middleware(['throttle:api'])->group(function
          * Auth protected routes
          */
         Route::middleware(['auth:api'])->group(function () {
-            Route::get('/', UserProfileController::class)->name('profile');
+            Route::get('/', [UserProfileController::class, 'show'])->name('profile');
+            Route::put('/edit', [UserProfileController::class, 'update'])->name('profile');
             Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
         });
     });
