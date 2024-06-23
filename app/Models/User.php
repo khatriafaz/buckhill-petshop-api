@@ -6,8 +6,11 @@ namespace App\Models;
 
 use App\Support\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Lcobucci\JWT\Token;
+use Lcobucci\JWT\Token\DataSet;
 
 class User extends Authenticatable
 {
@@ -54,5 +57,24 @@ class User extends Authenticatable
             'password' => 'hashed',
             'last_login_at' => 'datetime'
         ];
+    }
+
+    public function jwtTokens(): HasMany
+    {
+        return $this->hasMany(JwtToken::class);
+    }
+
+    public function recordToken(Token $token)
+    {
+        /** @var DataSet $claims */
+        $claims = $token->claims();
+
+        return $this->jwtTokens()->create([
+            'unique_id' => $claims->get('jti'),
+            'token_title' => 'Api token',
+            'restrictions' => [],
+            'permissions' => [],
+            'expires_at' => $claims->get('exp')
+        ]);
     }
 }

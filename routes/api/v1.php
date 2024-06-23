@@ -5,8 +5,17 @@
  * will have /api prefix
  */
 
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\UserProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1')->middleware(['throttle:api'])->group(function () {
-    // TODO add user routes here
+Route::prefix('v1')->as('api.v1.')->middleware(['throttle:api'])->group(function () {
+    Route::post('/login', [LoginController::class, 'login'])->name('login');
+
+    /**
+     * Auth protected routes
+     */
+    Route::middleware(['auth:api'])->group(function () {
+        Route::get('/profile', UserProfileController::class)->name('profile');
+    });
 });

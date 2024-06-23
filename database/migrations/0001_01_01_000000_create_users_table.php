@@ -34,6 +34,19 @@ return new class extends Migration
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
+
+        Schema::create('jwt_tokens', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained();
+            $table->string('unique_id');
+            $table->string('token_title');
+            $table->json('restrictions')->nullable();
+            $table->json('permissions')->nullable();
+            $table->timestamps();
+            $table->dateTime('expires_at')->nullable();
+            $table->dateTime('last_used_at')->nullable();
+            $table->dateTime('refreshed_at')->nullable();
+        });
     }
 
     /**
