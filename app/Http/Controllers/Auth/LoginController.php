@@ -25,4 +25,11 @@ class LoginController extends Controller
             'token' => $token->toString()
         ];
     }
+
+    public function logout()
+    {
+        Auth::logout();
+
+        return response()->noContent();
+    }
 }

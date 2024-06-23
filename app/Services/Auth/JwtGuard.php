@@ -116,4 +116,28 @@ class JwtGuard implements Guard
 
         return $this->hasValidCredentials($user, $credentials);
     }
+
+    public function logout()
+    {
+        $this->clearPersistentToken();
+
+        $this->user = null;
+    }
+
+    public function clearPersistentToken()
+    {
+        $user = $this->user();
+
+        if (! $token = $this->jwt->validateToken(request()->bearerToken())) {
+            return;
+        }
+
+        $claims = $token->claims();
+
+        $jwtToken = $user->jwtTokens()->where('unique_id', $claims->get('jti'))->first();
+
+        if ($jwtToken) {
+            $jwtToken->delete();
+        }
+    }
 }
