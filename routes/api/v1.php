@@ -22,6 +22,7 @@ Route::prefix('v1')->as('api.v1.')->middleware(['throttle:api'])->group(function
             Route::get('/', [UserProfileController::class, 'show'])->name('profile');
             Route::put('/edit', [UserProfileController::class, 'update'])->name('profile');
             Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+            Route::delete('/', [UserProfileController::class, 'destroy'])->name('destroy');
         });
     });
 });
