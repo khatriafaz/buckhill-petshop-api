@@ -29,3 +29,32 @@ test('file can be uploaded', function () {
 
     expect($exists)->toBe(true);
 });
+
+test('file is required to upload', function() {
+    Storage::fake('pet-shop');
+    $user = User::factory()->create();
+
+    $response = actingAs($user)->post(route('api.v1.files.store'), []);
+
+    $response->assertInvalid(['file']);
+
+    $count = File::query()->count();
+    expect($count)->toBe(0);
+});
+
+test('file more than 5mb is not allowed', function() {
+    Storage::fake('pet-shop');
+    $user = User::factory()->create();
+    $file = UploadedFile::fake()->image('avatar.jpg')->size(5121); // More than 5mb
+
+    $response = actingAs($user)->post(route('api.v1.files.store'), [
+        'file' => $file
+    ]);
+
+    $response->assertInvalid(['file']);
+
+    Storage::disk('pet-shop')->assertMissing($file->hashName());
+    $exists = File::query()->where('name', $file->getClientOriginalName())->exists();
+
+    expect($exists)->toBe(false);
+});

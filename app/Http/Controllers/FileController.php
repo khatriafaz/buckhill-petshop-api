@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\FileUploadRequest;
 use App\Models\File;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class FileController extends Controller
 {
-    public function store(Request $request)
+    public function store(FileUploadRequest $request)
     {
         $file = $request->file('file');
         $path = Storage::disk('pet-shop')->putFileAs('', $file, $file->hashName());
