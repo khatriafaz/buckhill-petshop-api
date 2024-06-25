@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\getJson;
 use function Pest\Laravel\postJson;
 
 test('file can be uploaded', function () {
@@ -93,4 +94,45 @@ test('file can be downloaded', function() {
     $response = actingAs($user)->get(route('api.v1.files.show', $uuid));
     $response->assertOk();
     $response->assertDownload($file->getClientOriginalName());
+});
+
+test('throws error if file not found for download', function() {
+    Storage::fake('pet-shop');
+    $user = User::factory()->create();
+    $uuid = 'eadbfeac-5258-45c2-bab7-ccb9b5ef74f9';
+    Str::createUuidsUsing(function () use ($uuid) {
+        return Uuid::fromString($uuid);
+    });
+    $file = UploadedFile::fake()->image('avatar.jpg');
+    $path = Storage::disk('pet-shop')->putFileAs('', $file, $file->hashName());
+
+    File::query()->create([
+        'name' => $file->getClientOriginalName(),
+        'path' => $path,
+        'size' => Storage::disk('pet-shop')->size($path),
+        'type' => Storage::disk('pet-shop')->mimeType($path),
+    ]);
+
+    $response = actingAs($user)->get(route('api.v1.files.show', 'eadbfeac-5258-45c2-bab7-ccb9b5ef74f8'));
+    $response->assertNotFound();
+});
+
+test('cannot download file without auth user', function() {
+    Storage::fake('pet-shop');
+    $uuid = 'eadbfeac-5258-45c2-bab7-ccb9b5ef74f9';
+    Str::createUuidsUsing(function () use ($uuid) {
+        return Uuid::fromString($uuid);
+    });
+    $file = UploadedFile::fake()->image('avatar.jpg');
+    $path = Storage::disk('pet-shop')->putFileAs('', $file, $file->hashName());
+
+    File::query()->create([
+        'name' => $file->getClientOriginalName(),
+        'path' => $path,
+        'size' => Storage::disk('pet-shop')->size($path),
+        'type' => Storage::disk('pet-shop')->mimeType($path),
+    ]);
+
+    $response = getJson(route('api.v1.files.show', $uuid));
+    $response->assertUnauthorized();
 });
