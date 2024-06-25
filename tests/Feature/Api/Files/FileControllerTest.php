@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\postJson;
 
 test('file can be uploaded', function () {
     Storage::fake('pet-shop');
@@ -56,5 +57,18 @@ test('file more than 5mb is not allowed', function() {
     Storage::disk('pet-shop')->assertMissing($file->hashName());
     $exists = File::query()->where('name', $file->getClientOriginalName())->exists();
 
+    expect($exists)->toBe(false);
+});
+
+test('file cannot be uploaded without auth user', function() {
+    $file = UploadedFile::fake()->image('avatar.jpg');
+    $response = postJson(route('api.v1.files.store'), [
+        'file' => $file
+    ]);
+
+    $response->assertUnauthorized();
+
+    Storage::disk('pet-shop')->assertMissing($file->hashName());
+    $exists = File::query()->where('name', $file->getClientOriginalName())->exists();
     expect($exists)->toBe(false);
 });
