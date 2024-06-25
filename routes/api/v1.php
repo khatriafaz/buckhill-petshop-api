@@ -34,5 +34,6 @@ Route::prefix('v1')->as('api.v1.')->middleware(['throttle:api'])->group(function
 
     Route::prefix('file')->as('files.')->middleware(['auth:api'])->group(function() {
         Route::post('/upload', [FileController::class, 'store'])->name('store');
+        Route::get('/{file:uuid}', [FileController::class, 'show'])->name('show');
     });
 });

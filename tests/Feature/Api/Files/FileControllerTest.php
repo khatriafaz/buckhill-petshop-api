@@ -72,3 +72,25 @@ test('file cannot be uploaded without auth user', function() {
     $exists = File::query()->where('name', $file->getClientOriginalName())->exists();
     expect($exists)->toBe(false);
 });
+
+test('file can be downloaded', function() {
+    Storage::fake('pet-shop');
+    $user = User::factory()->create();
+    $uuid = 'eadbfeac-5258-45c2-bab7-ccb9b5ef74f9';
+    Str::createUuidsUsing(function () use ($uuid) {
+        return Uuid::fromString($uuid);
+    });
+    $file = UploadedFile::fake()->image('avatar.jpg');
+    $path = Storage::disk('pet-shop')->putFileAs('', $file, $file->hashName());
+
+    File::query()->create([
+        'name' => $file->getClientOriginalName(),
+        'path' => $path,
+        'size' => Storage::disk('pet-shop')->size($path),
+        'type' => Storage::disk('pet-shop')->mimeType($path),
+    ]);
+
+    $response = actingAs($user)->get(route('api.v1.files.show', $uuid));
+    $response->assertOk();
+    $response->assertDownload($file->getClientOriginalName());
+});
