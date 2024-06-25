@@ -36,6 +36,12 @@ return [
             'throw' => false,
         ],
 
+        'pet-shop' => [
+            'driver' => 'local',
+            'root' => storage_path('app/pet-shop'),
+            'throw' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
