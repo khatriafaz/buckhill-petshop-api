@@ -39,6 +39,7 @@ Route::prefix('v1')->as('api.v1.')->middleware(['throttle:api'])->group(function
     });
 
     Route::as('categories.')->middleware(['auth:api'])->group(function() {
+        Route::get('/categories', [CategoryController::class, 'index'])->name('index');
         Route::post('/category/create', [CategoryController::class, 'store'])->name('store');
     });
 });

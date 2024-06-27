@@ -72,3 +72,14 @@ test('category slug is created', function () {
             ]
         ]);
 });
+
+test('categories can be listed', function () {
+    $user = User::factory()->create();
+    $categories = Category::factory()->count(10)->create();
+    $response = actingAs($user)->getJson(route('api.v1.categories.index'));
+    $response->assertOk();
+
+    $response->assertJson([
+        'data' => $categories->map->toArray()->toArray()
+    ]);
+});
