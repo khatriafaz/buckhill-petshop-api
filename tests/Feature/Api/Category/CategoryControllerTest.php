@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\postJson;
 
 test('category can be created', function () {
     $user = User::factory()->create();
@@ -27,4 +28,47 @@ test('category can be created', function () {
     $category = Category::first();
     expect($category->title)->toBe('Test category');
     expect($category->slug)->toBe('test-category');
+});
+
+
+test('category cannot be created without logged in user', function () {
+    $response = postJson(route('api.v1.categories.store'), [
+        'title' => 'Test category'
+    ]);
+    $response->assertUnauthorized();
+
+    expect(Category::count())->toBe(0);
+});
+
+test('category title is required', function () {
+    $user = User::factory()->create();
+    $response = actingAs($user)->postJson(route('api.v1.categories.store'), [
+        'title' => ''
+    ]);
+    $response->assertInvalid(['title' => 'required']);
+
+    expect(Category::count())->toBe(0);
+});
+
+test('category slug is created', function () {
+    $user = User::factory()->create();
+    $response = actingAs($user)->postJson(route('api.v1.categories.store'), [
+        'title' => 'First Category'
+    ]);
+    $response->assertCreated()
+        ->assertJson([
+            'data' => [
+                'slug' => 'first-category'
+            ]
+        ]);
+
+    $response = actingAs($user)->postJson(route('api.v1.categories.store'), [
+        'title' => 'Another Category'
+    ]);
+    $response->assertCreated()
+        ->assertJson([
+            'data' => [
+                'slug' => 'another-category'
+            ]
+        ]);
 });
