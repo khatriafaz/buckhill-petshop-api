@@ -8,6 +8,7 @@
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\UserProfileController;
 use Illuminate\Support\Facades\Route;
@@ -35,5 +36,9 @@ Route::prefix('v1')->as('api.v1.')->middleware(['throttle:api'])->group(function
     Route::prefix('file')->as('files.')->middleware(['auth:api'])->group(function() {
         Route::post('/upload', [FileController::class, 'store'])->name('store');
         Route::get('/{file:uuid}', [FileController::class, 'show'])->name('show');
+    });
+
+    Route::as('categories.')->middleware(['auth:api'])->group(function() {
+        Route::post('/category/create', [CategoryController::class, 'store'])->name('store');
     });
 });
