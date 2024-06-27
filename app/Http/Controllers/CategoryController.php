@@ -5,12 +5,18 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::paginate();
+        $categories = Category::query()
+            ->when($request->get('sort_by'), function (Builder $query) {
+                $query->orderBy(request('sort_by.field'), request('sort_by.direction'));
+            })
+            ->paginate($request->integer('limit', null));
 
         return CategoryResource::collection($categories);
     }

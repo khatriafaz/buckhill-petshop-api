@@ -83,3 +83,61 @@ test('categories can be listed', function () {
         'data' => $categories->map->toArray()->toArray()
     ]);
 });
+
+test('ensure categories request is paginated', function () {
+    $user = User::factory()->create();
+    $categories = Category::factory()->count(100)->create();
+    $response = actingAs($user)->getJson(route('api.v1.categories.index'));
+    $response->assertOk();
+
+    $response->assertJsonCount((new Category())->getPerPage(), 'data');
+});
+
+test('categories request accepts limit parameter', function () {
+    $user = User::factory()->create();
+    $categories = Category::factory()->count(100)->create();
+    $response = actingAs($user)->getJson(route('api.v1.categories.index', ['limit' => 10]));
+    $response->assertOk();
+
+    $response->assertJsonCount(10, 'data');
+});
+
+test('categories request accepts page parameter', function () {
+    $user = User::factory()->create();
+    $categories = Category::factory()->count(100)->create();
+    $response = actingAs($user)->getJson(route('api.v1.categories.index', ['page' => 1]));
+    $response->assertOk();
+
+    $response->assertJson([
+        'data' => array_values($categories->slice(0, 15)->map->toArray()->toArray()),
+    ]);
+
+    $response = actingAs($user)->getJson(route('api.v1.categories.index', ['page' => 2]));
+    $response->assertOk();
+
+    $response->assertJson([
+        'data' => array_values($categories->slice(15, 15)->map->toArray()->toArray()),
+    ]);
+});
+
+test('categories request accepts sort_by parameter', function () {
+    $user = User::factory()->create();
+    $categories = Category::factory()->count(100)->create();
+    $response = actingAs($user)->getJson(route('api.v1.categories.index', [
+        'sort_by' => ['field' => 'id', 'direction' => 'desc']
+    ]));
+    $response->assertOk();
+
+    $response->assertJson([
+        'data' => array_values($categories->reverse()->slice(0, 15)->map->toArray()->toArray()),
+    ]);
+
+    $response = actingAs($user)->getJson(route('api.v1.categories.index', [
+        'sort_by' => ['field' => 'title', 'direction' => 'asc']
+    ]));
+    $response->assertOk();
+
+    $response->assertJson([
+        'data' => array_values($categories->sortBy('title')->slice(0, 15)->map->toArray()->toArray()),
+    ]);
+});
