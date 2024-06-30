@@ -40,6 +40,7 @@ Route::prefix('v1')->as('api.v1.')->middleware(['throttle:api'])->group(function
 
     Route::as('categories.')->middleware(['auth:api'])->group(function() {
         Route::get('/categories', [CategoryController::class, 'index'])->name('index');
+        Route::get('/category/{category:uuid}', [CategoryController::class, 'show'])->name('show');
         Route::post('/category/create', [CategoryController::class, 'store'])->name('store');
         Route::put('/category/{category:uuid}', [CategoryController::class, 'update'])->name('update');
         Route::delete('/category/{category:uuid}', [CategoryController::class, 'destroy'])->name('destroy');

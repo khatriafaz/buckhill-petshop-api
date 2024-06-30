@@ -21,6 +21,11 @@ class CategoryController extends Controller
         return CategoryResource::collection($categories);
     }
 
+    public function show(Category $category)
+    {
+        return CategoryResource::make($category);
+    }
+
     public function store(StoreCategoryRequest $request)
     {
         $category = Category::query()->create($request->validated());

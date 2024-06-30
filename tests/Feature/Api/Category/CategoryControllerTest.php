@@ -212,3 +212,27 @@ test('cannot delete non-existent category', function () {
     $response = actingAs($user)->deleteJson(route('api.v1.categories.destroy', Str::orderedUuid()));
     $response->assertNotFound();
 });
+
+test('category can be retrieved', function() {
+    $user = User::factory()->create();
+    $category = Category::factory()->create();
+
+    $response = actingAs($user)->getJson(route('api.v1.categories.show', $category));
+    $response->assertOk();
+
+    $response->assertJson([
+        'data' => [
+            'id' => $category->id,
+            'uuid' => $category->uuid,
+            'title' => $category->title,
+            'slug' => $category->slug,
+        ]
+    ]);
+});
+
+test('cannot retrieve non-existent category', function () {
+    $user = User::factory()->create();
+
+    $response = actingAs($user)->getJson(route('api.v1.categories.show', Str::orderedUuid()));
+    $response->assertNotFound();
+});
