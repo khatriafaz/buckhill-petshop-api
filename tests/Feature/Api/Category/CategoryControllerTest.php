@@ -141,3 +141,46 @@ test('categories request accepts sort_by parameter', function () {
         'data' => array_values($categories->sortBy('title')->slice(0, 15)->map->toArray()->toArray()),
     ]);
 });
+
+test('category can be updated', function () {
+    $user = User::factory()->create();
+    $category = Category::factory()->create([
+        'title' => 'Original title'
+    ]);
+
+    $response = actingAs($user)->putJson(route('api.v1.categories.update', $category), [
+        'title' => 'Updated title'
+    ]);
+    $response->assertOk();
+
+    $response->assertJson([
+        'data' => [
+            'uuid' => $category->uuid,
+            'title' => 'Updated title',
+        ]
+    ]);
+
+    expect(Category::query()->count())->toBe(1);
+});
+
+test('category slug stays original on update', function () {
+    $user = User::factory()->create();
+    $category = Category::factory()->create([
+        'title' => 'Original title'
+    ]);
+
+    $response = actingAs($user)->putJson(route('api.v1.categories.update', $category), [
+        'title' => 'Updated title'
+    ]);
+    $response->assertOk();
+
+    $response->assertJson([
+        'data' => [
+            'uuid' => $category->uuid,
+            'title' => 'Updated title',
+            'slug' => $category->slug
+        ]
+    ]);
+
+    expect(Category::query()->count())->toBe(1);
+});

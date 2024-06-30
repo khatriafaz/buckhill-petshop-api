@@ -27,4 +27,11 @@ class CategoryController extends Controller
 
         return CategoryResource::make($category);
     }
+
+    public function update(Category $category, StoreCategoryRequest $request)
+    {
+        $category->update($request->validated());
+
+        return CategoryResource::make($category->fresh());
+    }
 }
