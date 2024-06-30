@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\FileController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -44,5 +45,9 @@ Route::prefix('v1')->as('api.v1.')->middleware(['throttle:api'])->group(function
         Route::post('/category/create', [CategoryController::class, 'store'])->name('store');
         Route::put('/category/{category:uuid}', [CategoryController::class, 'update'])->name('update');
         Route::delete('/category/{category:uuid}', [CategoryController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::as('products.')->middleware(['auth:api'])->group(function() {
+        Route::post('/product/create', [ProductController::class, 'store'])->name('store');
     });
 });
