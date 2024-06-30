@@ -34,4 +34,11 @@ class CategoryController extends Controller
 
         return CategoryResource::make($category->fresh());
     }
+
+    public function destroy(Category $category)
+    {
+        $category->delete();
+
+        return response()->noContent();
+    }
 }

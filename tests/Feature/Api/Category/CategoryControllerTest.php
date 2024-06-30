@@ -193,3 +193,22 @@ test('cannot update non existing category', function () {
     ]);
     $response->assertNotFound();
 });
+
+test('category can be deleted', function () {
+    $user = User::factory()->create();
+    $category = Category::factory()->create([
+        'title' => 'Original title'
+    ]);
+
+    $response = actingAs($user)->deleteJson(route('api.v1.categories.destroy', $category));
+    $response->assertNoContent();
+
+    expect(Category::query()->count())->toBe(0);
+});
+
+test('cannot delete non-existent category', function () {
+    $user = User::factory()->create();
+
+    $response = actingAs($user)->deleteJson(route('api.v1.categories.destroy', Str::orderedUuid()));
+    $response->assertNotFound();
+});
