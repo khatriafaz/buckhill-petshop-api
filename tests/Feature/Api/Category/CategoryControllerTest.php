@@ -184,3 +184,12 @@ test('category slug stays original on update', function () {
 
     expect(Category::query()->count())->toBe(1);
 });
+
+test('cannot update non existing category', function () {
+    $user = User::factory()->create();
+
+    $response = actingAs($user)->putJson(route('api.v1.categories.update', Str::uuid()), [
+        'title' => 'Updated title'
+    ]);
+    $response->assertNotFound();
+});
