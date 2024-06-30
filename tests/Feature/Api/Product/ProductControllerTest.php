@@ -40,3 +40,18 @@ test('product can be created', function () {
     expect($product->title)->toBe('Test product');
     expect($product->price)->toBe(16.69);
 });
+
+test('creating product requires title, category and price', function () {
+    $user = User::factory()->create();
+
+    $response = actingAs($user)->postJson(route('api.v1.products.store'), [
+        'description' => 'Test description',
+    ]);
+    $response->assertInvalid([
+        'category_uuid',
+        'title',
+        'price'
+    ]);
+
+    expect(Product::query()->count())->toBe(0);
+});
