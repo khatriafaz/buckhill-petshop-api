@@ -8,6 +8,11 @@ use Ramsey\Uuid\Uuid;
 
 use function Pest\Laravel\actingAs;
 
+beforeEach(function() {
+    // Reset the UUID logic
+    Str::createUuidsUsing();
+});
+
 test('product can be created', function () {
     $user = User::factory()->create();
     $category = Category::factory()->create([
@@ -51,6 +56,25 @@ test('creating product requires title, category and price', function () {
         'category_uuid',
         'title',
         'price'
+    ]);
+
+    expect(Product::query()->count())->toBe(0);
+});
+
+test('creating product requires existing category', function () {
+    $user = User::factory()->create();
+    $category = Category::factory()->create([
+        'title' => 'Test category'
+    ]);
+
+    $response = actingAs($user)->postJson(route('api.v1.products.store'), [
+        'category_uuid' => (string) Str::orderedUuid(),
+        'title' => 'Test product',
+        'price' => 16.69,
+        'description' => 'Test description',
+    ]);
+    $response->assertInvalid([
+        'category_uuid',
     ]);
 
     expect(Product::query()->count())->toBe(0);
