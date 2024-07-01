@@ -19,6 +19,18 @@ class Product extends Model
         'metadata'
     ];
 
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'price' => 'float',
+        ];
+    }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'category_uuid');

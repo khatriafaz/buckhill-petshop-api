@@ -186,3 +186,40 @@ test('product delete endpoint throws not found for non-existing products', funct
     $exists = Product::query()->where('uuid', $product->uuid)->exists();
     expect($exists)->toBe(true);
 });
+
+test('can get a single product', function () {
+    $user = User::factory()->create();
+    $category = Category::factory()->create();
+    $product = Product::factory()->for($category)->create();
+
+    $response = actingAs($user)->getJson(route('api.v1.products.show', $product));
+    $response->assertOk();
+
+    $product = $product->fresh('category');
+
+    $response->assertJson([
+        'data' => [
+            'uuid' => $product->uuid,
+            'category' => [
+                'uuid' => $product->category->uuid,
+                'title' => $product->category->title,
+                'slug' => $product->category->slug,
+            ],
+            'title' => $product->title,
+            'description' => $product->description
+        ]
+    ]);
+
+    // assertJson does not case the amount with no decimal to float,
+    // so casting it and adding additional assertion
+    expect((float) $response->json('data.price'))->toBe($product->price);
+});
+
+test('get single product throws not-found for non-existing product', function () {
+    $user = User::factory()->create();
+    $category = Category::factory()->create();
+    $product = Product::factory()->for($category)->create();
+
+    $response = actingAs($user)->getJson(route('api.v1.products.show', (string) Str::orderedUuid()));
+    $response->assertNotFound();
+});

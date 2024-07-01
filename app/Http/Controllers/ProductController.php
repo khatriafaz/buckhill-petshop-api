@@ -9,6 +9,11 @@ use App\Models\Product;
 
 class ProductController extends Controller
 {
+    public function show(Product $product)
+    {
+        return ProductResource::make($product->load('category'));
+    }
+
     public function store(StoreProductRequest $request)
     {
         $product = Product::query()->create($request->validated());
