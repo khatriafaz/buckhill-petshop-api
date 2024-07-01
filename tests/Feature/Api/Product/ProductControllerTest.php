@@ -3,6 +3,7 @@
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 
@@ -171,8 +172,11 @@ test('product can be deleted', function () {
     $response = actingAs($user)->deleteJson(route('api.v1.products.destroy', $product));
     $response->assertNoContent();
 
-    $exists = Product::query()->where('uuid', $product->uuid)->exists();
-    expect($exists)->toBe(false);
+    $existsFromSoftDelete = Product::query()->where('uuid', $product->uuid)->exists();
+    expect($existsFromSoftDelete)->toBe(false);
+
+    $existsInDB = DB::table((new Product())->getTable())->where('uuid', $product->uuid)->exists();
+    expect($existsInDB)->toBe(true);
 });
 
 test('product delete endpoint throws not found for non-existing products', function () {
