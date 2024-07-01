@@ -34,24 +34,26 @@ Route::prefix('v1')->as('api.v1.')->middleware(['throttle:api'])->group(function
         });
     });
 
-    Route::prefix('file')->as('files.')->middleware(['auth:api'])->group(function() {
-        Route::post('/upload', [FileController::class, 'store'])->name('store');
-        Route::get('/{file:uuid}', [FileController::class, 'show'])->name('show');
-    });
+    Route::middleware(['auth:api'])->group(function() {
+        Route::as('files.')->group(function() {
+            Route::post('/file/upload', [FileController::class, 'store'])->name('store');
+            Route::get('/file/{file:uuid}', [FileController::class, 'show'])->name('show');
+        });
 
-    Route::as('categories.')->middleware(['auth:api'])->group(function() {
-        Route::get('/categories', [CategoryController::class, 'index'])->name('index');
-        Route::get('/category/{category:uuid}', [CategoryController::class, 'show'])->name('show');
-        Route::post('/category/create', [CategoryController::class, 'store'])->name('store');
-        Route::put('/category/{category:uuid}', [CategoryController::class, 'update'])->name('update');
-        Route::delete('/category/{category:uuid}', [CategoryController::class, 'destroy'])->name('destroy');
-    });
+        Route::as('categories.')->group(function() {
+            Route::get('/categories', [CategoryController::class, 'index'])->name('index');
+            Route::get('/category/{category:uuid}', [CategoryController::class, 'show'])->name('show');
+            Route::post('/category/create', [CategoryController::class, 'store'])->name('store');
+            Route::put('/category/{category:uuid}', [CategoryController::class, 'update'])->name('update');
+            Route::delete('/category/{category:uuid}', [CategoryController::class, 'destroy'])->name('destroy');
+        });
 
-    Route::as('products.')->middleware(['auth:api'])->group(function() {
-        Route::get('/products', [ProductController::class, 'index'])->name('index');
-        Route::get('/product/{product:uuid}', [ProductController::class, 'show'])->name('show');
-        Route::post('/product/create', [ProductController::class, 'store'])->name('store');
-        Route::put('/product/{product:uuid}', [ProductController::class, 'update'])->name('update');
-        Route::delete('/product/{product:uuid}', [ProductController::class, 'destroy'])->name('destroy');
+        Route::as('products.')->group(function() {
+            Route::get('/products', [ProductController::class, 'index'])->name('index');
+            Route::get('/product/{product:uuid}', [ProductController::class, 'show'])->name('show');
+            Route::post('/product/create', [ProductController::class, 'store'])->name('store');
+            Route::put('/product/{product:uuid}', [ProductController::class, 'update'])->name('update');
+            Route::delete('/product/{product:uuid}', [ProductController::class, 'destroy'])->name('destroy');
+        });
     });
 });
