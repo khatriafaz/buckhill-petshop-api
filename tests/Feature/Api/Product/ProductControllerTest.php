@@ -138,3 +138,27 @@ test('product update fields are required when present', function () {
     expect($product->price)->toBe(16.69);
     expect($product->description)->toBe('Test description');
 });
+
+test('a non-existing product cannot be updated', function () {
+    $user = User::factory()->create();
+    $category = Category::factory()->create([
+        'title' => 'Test category'
+    ]);
+    $product = Product::factory()->create([
+        'category_uuid' => $category->uuid,
+        'title' => 'Test product',
+        'price' => 16.69,
+        'description' => 'Test description',
+    ]);
+
+    $response = actingAs($user)->putJson(route('api.v1.products.update', (string) Str::orderedUuid()), [
+        'title' => '',
+        'price' => null,
+    ]);
+    $response->assertNotFound();
+
+    $product->refresh();
+    expect($product->title)->toBe('Test product');
+    expect($product->price)->toBe(16.69);
+    expect($product->description)->toBe('Test description');
+});
