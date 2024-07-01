@@ -111,7 +111,7 @@ test('product can be updated', function () {
     $product->refresh();
     expect($product->title)->toBe('Test updated product');
     expect($product->price)->toBe(18.69);
-    expect($product->title)->toBe('Test updated product');
+    expect($product->description)->toBe('Test updated description');
 });
 
 
