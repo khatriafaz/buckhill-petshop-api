@@ -48,6 +48,7 @@ Route::prefix('v1')->as('api.v1.')->middleware(['throttle:api'])->group(function
     });
 
     Route::as('products.')->middleware(['auth:api'])->group(function() {
+        Route::get('/products', [ProductController::class, 'index'])->name('index');
         Route::get('/product/{product:uuid}', [ProductController::class, 'show'])->name('show');
         Route::post('/product/create', [ProductController::class, 'store'])->name('store');
         Route::put('/product/{product:uuid}', [ProductController::class, 'update'])->name('update');
