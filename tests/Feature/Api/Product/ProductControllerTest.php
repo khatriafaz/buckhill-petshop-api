@@ -113,3 +113,28 @@ test('product can be updated', function () {
     expect($product->price)->toBe(18.69);
     expect($product->title)->toBe('Test updated product');
 });
+
+
+test('product update fields are required when present', function () {
+    $user = User::factory()->create();
+    $category = Category::factory()->create([
+        'title' => 'Test category'
+    ]);
+    $product = Product::factory()->create([
+        'category_uuid' => $category->uuid,
+        'title' => 'Test product',
+        'price' => 16.69,
+        'description' => 'Test description',
+    ]);
+
+    $response = actingAs($user)->putJson(route('api.v1.products.update', $product), [
+        'title' => '',
+        'price' => null,
+    ]);
+    $response->assertInvalid(['title', 'price']);
+
+    $product->refresh();
+    expect($product->title)->toBe('Test product');
+    expect($product->price)->toBe(16.69);
+    expect($product->description)->toBe('Test description');
+});
