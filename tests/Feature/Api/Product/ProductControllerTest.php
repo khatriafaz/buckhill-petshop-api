@@ -79,3 +79,37 @@ test('creating product requires existing category', function () {
 
     expect(Product::query()->count())->toBe(0);
 });
+
+test('product can be updated', function () {
+    $user = User::factory()->create();
+    $category = Category::factory()->create([
+        'title' => 'Test category'
+    ]);
+    $product = Product::factory()->create([
+        'category_uuid' => $category->uuid,
+        'title' => 'Test product',
+        'price' => 16.69,
+        'description' => 'Test description',
+    ]);
+
+    $response = actingAs($user)->putJson(route('api.v1.products.update', $product), [
+        'title' => 'Test updated product',
+        'price' => 18.69,
+        'description' => 'Test updated description',
+    ]);
+    $response->assertOk();
+
+    $response->assertJson([
+        'data' => [
+            'uuid' => $product->uuid,
+            'title' => 'Test updated product',
+            'price' => 18.69,
+            'description' => 'Test updated description'
+        ]
+    ]);
+
+    $product->refresh();
+    expect($product->title)->toBe('Test updated product');
+    expect($product->price)->toBe(18.69);
+    expect($product->title)->toBe('Test updated product');
+});
