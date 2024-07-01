@@ -50,5 +50,6 @@ Route::prefix('v1')->as('api.v1.')->middleware(['throttle:api'])->group(function
     Route::as('products.')->middleware(['auth:api'])->group(function() {
         Route::post('/product/create', [ProductController::class, 'store'])->name('store');
         Route::put('/product/{product:uuid}', [ProductController::class, 'update'])->name('update');
+        Route::delete('/product/{product:uuid}', [ProductController::class, 'destroy'])->name('destroy');
     });
 });

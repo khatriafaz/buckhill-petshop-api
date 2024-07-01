@@ -22,4 +22,11 @@ class ProductController extends Controller
 
         return ProductResource::make($product->refresh());
     }
+
+    public function destroy(Product $product)
+    {
+        $product->delete();
+
+        return response()->noContent();
+    }
 }

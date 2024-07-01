@@ -162,3 +162,27 @@ test('a non-existing product cannot be updated', function () {
     expect($product->price)->toBe(16.69);
     expect($product->description)->toBe('Test description');
 });
+
+test('product can be deleted', function () {
+    $user = User::factory()->create();
+    $category = Category::factory()->create();
+    $product = Product::factory()->for($category)->create();
+
+    $response = actingAs($user)->deleteJson(route('api.v1.products.destroy', $product));
+    $response->assertNoContent();
+
+    $exists = Product::query()->where('uuid', $product->uuid)->exists();
+    expect($exists)->toBe(false);
+});
+
+test('product delete endpoint throws not found for non-existing products', function () {
+    $user = User::factory()->create();
+    $category = Category::factory()->create();
+    $product = Product::factory()->for($category)->create();
+
+    $response = actingAs($user)->deleteJson(route('api.v1.products.destroy', (string) Str::orderedUuid()));
+    $response->assertNotFound();
+
+    $exists = Product::query()->where('uuid', $product->uuid)->exists();
+    expect($exists)->toBe(true);
+});
