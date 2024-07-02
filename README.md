@@ -43,3 +43,5 @@ Run the project:
 ```sh
 php artisan serve
 ```
+
+The api documentation can be viewed at: http://localhost:8000/api/documentation
