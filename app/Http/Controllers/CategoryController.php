@@ -7,9 +7,43 @@ use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use OpenApi\Attributes as OA;
 
+#[OA\Tag(
+    name: 'Categories',
+    description: 'Categories API endpoints'
+)]
 class CategoryController extends Controller
 {
+    #[OA\Get(
+        path: '/api/v1/categories',
+        summary: 'List all categories',
+        tags: ['Categories'],
+        parameters: [
+            new OA\Parameter(name: 'page', in: 'query', schema: new OA\Schema(type: 'integer')),
+            new OA\Parameter(name: 'limit', in: 'query', schema: new OA\Schema(type: 'integer')),
+            new OA\Parameter(
+                name: 'sort_by[field]',
+                description: 'Sort field',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'string'),
+                example: 'title'
+            ),
+            new OA\Parameter(
+                name: 'sort_by[direction]',
+                description: 'Sort direction',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'string'),
+                example: 'desc'
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'OK'),
+            new OA\Response(response: 422, description: 'Unprocessed entity')
+        ]
+    )]
     public function index(Request $request)
     {
         $categories = Category::query()

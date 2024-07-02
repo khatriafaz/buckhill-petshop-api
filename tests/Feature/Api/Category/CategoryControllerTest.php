@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\getJson;
 use function Pest\Laravel\postJson;
 
 test('category can be created', function () {
@@ -74,9 +75,8 @@ test('category slug is created', function () {
 });
 
 test('categories can be listed', function () {
-    $user = User::factory()->create();
     $categories = Category::factory()->count(10)->create();
-    $response = actingAs($user)->getJson(route('api.v1.categories.index'));
+    $response = getJson(route('api.v1.categories.index'));
     $response->assertOk();
 
     $response->assertJson([
@@ -85,34 +85,31 @@ test('categories can be listed', function () {
 });
 
 test('ensure categories request is paginated', function () {
-    $user = User::factory()->create();
     $categories = Category::factory()->count(100)->create();
-    $response = actingAs($user)->getJson(route('api.v1.categories.index'));
+    $response = getJson(route('api.v1.categories.index'));
     $response->assertOk();
 
     $response->assertJsonCount((new Category())->getPerPage(), 'data');
 });
 
 test('categories request accepts limit parameter', function () {
-    $user = User::factory()->create();
     $categories = Category::factory()->count(100)->create();
-    $response = actingAs($user)->getJson(route('api.v1.categories.index', ['limit' => 10]));
+    $response = getJson(route('api.v1.categories.index', ['limit' => 10]));
     $response->assertOk();
 
     $response->assertJsonCount(10, 'data');
 });
 
 test('categories request accepts page parameter', function () {
-    $user = User::factory()->create();
     $categories = Category::factory()->count(100)->create();
-    $response = actingAs($user)->getJson(route('api.v1.categories.index', ['page' => 1]));
+    $response = getJson(route('api.v1.categories.index', ['page' => 1]));
     $response->assertOk();
 
     $response->assertJson([
         'data' => array_values($categories->slice(0, 15)->map->toArray()->toArray()),
     ]);
 
-    $response = actingAs($user)->getJson(route('api.v1.categories.index', ['page' => 2]));
+    $response = getJson(route('api.v1.categories.index', ['page' => 2]));
     $response->assertOk();
 
     $response->assertJson([
@@ -121,9 +118,8 @@ test('categories request accepts page parameter', function () {
 });
 
 test('categories request accepts sort_by parameter', function () {
-    $user = User::factory()->create();
     $categories = Category::factory()->count(100)->create();
-    $response = actingAs($user)->getJson(route('api.v1.categories.index', [
+    $response = getJson(route('api.v1.categories.index', [
         'sort_by' => ['field' => 'id', 'direction' => 'desc']
     ]));
     $response->assertOk();
@@ -132,7 +128,7 @@ test('categories request accepts sort_by parameter', function () {
         'data' => array_values($categories->reverse()->slice(0, 15)->map->toArray()->toArray()),
     ]);
 
-    $response = actingAs($user)->getJson(route('api.v1.categories.index', [
+    $response = getJson(route('api.v1.categories.index', [
         'sort_by' => ['field' => 'title', 'direction' => 'asc']
     ]));
     $response->assertOk();
