@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\getJson;
 
 beforeEach(function() {
     // Reset the UUID logic
@@ -229,11 +230,10 @@ test('get single product throws not-found for non-existing product', function ()
 });
 
 test('products can be listed', function () {
-    $user = User::factory()->create();
     $category = Category::factory()->create();
     $products = Product::factory()->for($category)->count(10)->create();
 
-    $response = actingAs($user)->getJson(route('api.v1.products.index'));
+    $response = getJson(route('api.v1.products.index'));
     $response->assertOk();
 
     // response must include categories as well
@@ -245,40 +245,37 @@ test('products can be listed', function () {
 });
 
 test('ensure products request is paginated', function () {
-    $user = User::factory()->create();
     $category = Category::factory()->create();
     $products = Product::factory()->for($category)->count(100)->create();
 
-    $response = actingAs($user)->getJson(route('api.v1.products.index'));
+    $response = getJson(route('api.v1.products.index'));
     $response->assertOk();
 
     $response->assertJsonCount((new Product())->getPerPage(), 'data');
 });
 
 test('products request accepts limit parameter', function () {
-    $user = User::factory()->create();
     $category = Category::factory()->create();
     $products = Product::factory()->for($category)->count(100)->create();
 
-    $response = actingAs($user)->getJson(route('api.v1.products.index', ['limit' => 10]));
+    $response = getJson(route('api.v1.products.index', ['limit' => 10]));
     $response->assertOk();
 
     $response->assertJsonCount(10, 'data');
 });
 
 test('products request accepts page parameter', function () {
-    $user = User::factory()->create();
     $category = Category::factory()->create();
     $products = Product::factory()->for($category)->count(100)->create();
 
-    $response = actingAs($user)->getJson(route('api.v1.products.index', ['page' => 1]));
+    $response = getJson(route('api.v1.products.index', ['page' => 1]));
     $response->assertOk();
 
     $response->assertJson([
         'data' => array_values($products->slice(0, 15)->map->toArray()->toArray()),
     ]);
 
-    $response = actingAs($user)->getJson(route('api.v1.products.index', ['page' => 2]));
+    $response = getJson(route('api.v1.products.index', ['page' => 2]));
     $response->assertOk();
 
     $response->assertJson([
@@ -287,11 +284,10 @@ test('products request accepts page parameter', function () {
 });
 
 test('products request accepts sort_by parameter', function () {
-    $user = User::factory()->create();
     $category = Category::factory()->create();
     $products = Product::factory()->for($category)->count(100)->create();
 
-    $response = actingAs($user)->getJson(route('api.v1.products.index', [
+    $response = getJson(route('api.v1.products.index', [
         'sort_by' => ['field' => 'id', 'direction' => 'desc']
     ]));
     $response->assertOk();
@@ -300,7 +296,7 @@ test('products request accepts sort_by parameter', function () {
         'data' => array_values($products->reverse()->slice(0, 15)->map->toArray()->toArray()),
     ]);
 
-    $response = actingAs($user)->getJson(route('api.v1.products.index', [
+    $response = getJson(route('api.v1.products.index', [
         'sort_by' => ['field' => 'title', 'direction' => 'asc']
     ]));
     $response->assertOk();
@@ -311,32 +307,30 @@ test('products request accepts sort_by parameter', function () {
 });
 
 test('products request sort_by.field is allowed for specified fields', function ($field) {
-    $user = User::factory()->create();
     $category = Category::factory()->create();
     $products = Product::factory()->for($category)->count(100)->create();
 
-    $response = actingAs($user)->getJson(route('api.v1.products.index', [
+    $response = getJson(route('api.v1.products.index', [
         'sort_by' => ['field' => $field, 'direction' => 'desc']
     ]));
     $response->assertOk();
 
-    $response = actingAs($user)->getJson(route('api.v1.products.index', [
+    $response = getJson(route('api.v1.products.index', [
         'sort_by' => ['field' => 'asdsa', 'direction' => 'desc']
     ]));
     $response->assertInvalid(['sort_by.field']);
 })->with(['id', 'title', 'price']);
 
 test('products request sort_by.direction is either asc|desc', function ($direction) {
-    $user = User::factory()->create();
     $category = Category::factory()->create();
     $products = Product::factory()->for($category)->count(100)->create();
 
-    $response = actingAs($user)->getJson(route('api.v1.products.index', [
+    $response = getJson(route('api.v1.products.index', [
         'sort_by' => ['field' => 'id', 'direction' => $direction]
     ]));
     $response->assertOk();
 
-    $response = actingAs($user)->getJson(route('api.v1.products.index', [
+    $response = getJson(route('api.v1.products.index', [
         'sort_by' => ['field' => 'id', 'direction' => 'asdasd']
     ]));
     $response->assertInvalid(['sort_by.direction']);

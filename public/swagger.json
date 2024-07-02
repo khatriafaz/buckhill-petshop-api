@@ -58,12 +58,7 @@
                     "422": {
                         "description": "Unprocessed entity"
                     }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             }
         },
         "/api/v1/product/{uuid}": {

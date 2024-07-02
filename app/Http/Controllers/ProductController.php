@@ -20,7 +20,6 @@ class ProductController extends Controller
         path: '/api/v1/products',
         summary: 'List all products',
         tags: ['Products'],
-        security: [['bearerAuth' => []]],
         parameters: [
             new OA\Parameter(name: 'page', in: 'query', schema: new OA\Schema(type: 'integer')),
             new OA\Parameter(name: 'limit', in: 'query', schema: new OA\Schema(type: 'integer')),
@@ -62,7 +61,6 @@ class ProductController extends Controller
         path: '/api/v1/product/{uuid}',
         summary: 'Fetch a product',
         tags: ['Products'],
-        security: [['bearerAuth' => []]],
         parameters: [
             new OA\Parameter(name: 'uuid', in: 'path', schema: new OA\Schema(type: 'string'), required: true),
         ],

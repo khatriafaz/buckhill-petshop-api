@@ -49,11 +49,14 @@ Route::prefix('v1')->as('api.v1.')->middleware(['throttle:api'])->group(function
         });
 
         Route::as('products.')->group(function() {
-            Route::get('/products', [ProductController::class, 'index'])->name('index');
-            Route::get('/product/{product:uuid}', [ProductController::class, 'show'])->name('show');
             Route::post('/product/create', [ProductController::class, 'store'])->name('store');
             Route::put('/product/{product:uuid}', [ProductController::class, 'update'])->name('update');
             Route::delete('/product/{product:uuid}', [ProductController::class, 'destroy'])->name('destroy');
         });
+    });
+
+    Route::as('products.')->group(function() {
+        Route::get('/products', [ProductController::class, 'index'])->name('index');
+        Route::get('/product/{product:uuid}', [ProductController::class, 'show'])->name('show');
     });
 });
