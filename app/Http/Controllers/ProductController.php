@@ -18,9 +18,29 @@ class ProductController extends Controller
 {
     #[OA\Get(
         path: '/api/v1/products',
+        summary: 'List all products',
         tags: ['Products'],
+        parameters: [
+            new OA\Parameter(name: 'page', in: 'query', schema: new OA\Schema(type: 'integer')),
+            new OA\Parameter(name: 'limit', in: 'query', schema: new OA\Schema(type: 'integer')),
+            new OA\Parameter(
+                name: 'sort_by[field]',
+                description: 'Sort field',
+                in: 'query',
+                schema: new OA\Schema(type: 'string'),
+                example: 'created_at'
+            ),
+            new OA\Parameter(
+                name: 'sort_by[direction]',
+                description: 'Sort direction',
+                in: 'query',
+                schema: new OA\Schema(type: 'string'),
+                example: 'desc'
+            ),
+        ],
         responses: [
-            new OA\Response(response: 200, description: 'List products')
+            new OA\Response(response: 200, description: 'OK'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
         ]
     )]
     public function index(ProductFilterRequest $request)

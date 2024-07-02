@@ -10,10 +10,48 @@
                 "tags": [
                     "Products"
                 ],
+                "summary": "List all products",
                 "operationId": "7ca3593d05653d957ae7be1ac648ca44",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "sort_by[field]",
+                        "in": "query",
+                        "description": "Sort field",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "created_at"
+                    },
+                    {
+                        "name": "sort_by[direction]",
+                        "in": "query",
+                        "description": "Sort direction",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "desc"
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "List products"
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
                     }
                 }
             }
