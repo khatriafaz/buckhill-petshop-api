@@ -93,7 +93,7 @@ class ProductController extends Controller
             ),
         ),
         responses: [
-            new OA\Response(response: 200, description: 'OK'),
+            new OA\Response(response: 201, description: 'Created'),
             new OA\Response(response: 401, description: 'Unauthorized'),
             new OA\Response(response: 422, description: 'Unprocessed entity'),
         ]
