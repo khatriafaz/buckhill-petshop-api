@@ -52,9 +52,6 @@
                     "200": {
                         "description": "OK"
                     },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
                     "422": {
                         "description": "Unprocessed entity"
                     }
@@ -82,13 +79,64 @@
                     "200": {
                         "description": "OK"
                     },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
                     "404": {
                         "description": "Not found"
                     }
                 }
+            }
+        },
+        "/api/v1/product/create": {
+            "post": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Create a product",
+                "operationId": "5fb16fdd651aaa9ed219b4f689ec4f7a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "category_uuid": {
+                                        "example": ""
+                                    },
+                                    "title": {
+                                        "example": "Test product"
+                                    },
+                                    "price": {
+                                        "example": 299.99
+                                    },
+                                    "description": {
+                                        "example": "A product description"
+                                    },
+                                    "metadata": {
+                                        "properties": {
+                                            "brand": {
+                                                "example": ""
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         }
     },

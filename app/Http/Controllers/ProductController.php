@@ -42,7 +42,6 @@ class ProductController extends Controller
         ],
         responses: [
             new OA\Response(response: 200, description: 'OK'),
-            new OA\Response(response: 401, description: 'Unauthorized'),
             new OA\Response(response: 422, description: 'Unprocessed entity')
         ]
     )]
@@ -66,7 +65,6 @@ class ProductController extends Controller
         ],
         responses: [
             new OA\Response(response: 200, description: 'OK'),
-            new OA\Response(response: 401, description: 'Unauthorized'),
             new OA\Response(response: 404, description: 'Not found'),
         ]
     )]
@@ -75,6 +73,30 @@ class ProductController extends Controller
         return ProductResource::make($product->load('category'));
     }
 
+    #[OA\Post(
+        path: '/api/v1/product/create',
+        summary: 'Create a product',
+        tags: ['Products'],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'category_uuid', example: ''),
+                    new OA\Property(property: 'title', example: 'Test product'),
+                    new OA\Property(property: 'price', example: 299.99),
+                    new OA\Property(property: 'description', example: 'A product description'),
+                    new OA\Property(property: 'metadata', properties: [
+                        new OA\Property(property: 'brand', example: '')
+                    ])
+                ]
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'OK'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+        ]
+    )]
     public function store(StoreProductRequest $request)
     {
         $product = Product::query()->create($request->validated());
