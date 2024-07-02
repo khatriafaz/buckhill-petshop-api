@@ -55,6 +55,18 @@ class CategoryController extends Controller
         return CategoryResource::collection($categories);
     }
 
+    #[OA\Get(
+        path: '/api/v1/category/{uuid}',
+        summary: 'Fetch a category',
+        tags: ['Categories'],
+        parameters: [
+            new OA\Parameter(name: 'uuid', in: 'path', schema: new OA\Schema(type: 'string'), required: true),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'OK'),
+            new OA\Response(response: 404, description: 'Not found'),
+        ]
+    )]
     public function show(Category $category)
     {
         return CategoryResource::make($category);
