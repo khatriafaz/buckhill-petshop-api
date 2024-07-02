@@ -11,6 +11,12 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ProductController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/api/v1/products",
+     *     @OA\Response(response="200", description="List products")
+     * )
+     */
     public function index(ProductFilterRequest $request)
     {
         $products = Product::query()->with('category')
