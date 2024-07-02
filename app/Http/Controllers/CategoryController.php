@@ -72,6 +72,25 @@ class CategoryController extends Controller
         return CategoryResource::make($category);
     }
 
+    #[OA\Post(
+        path: '/api/v1/category/create',
+        summary: 'Create a category',
+        tags: ['Categories'],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'title', example: 'Test category'),
+                ]
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Created'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 422, description: 'Unprocessed entity'),
+        ]
+    )]
     public function store(StoreCategoryRequest $request)
     {
         $category = Category::query()->create($request->validated());
