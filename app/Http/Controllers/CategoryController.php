@@ -98,6 +98,29 @@ class CategoryController extends Controller
         return CategoryResource::make($category);
     }
 
+    #[OA\Put(
+        path: '/api/v1/category/{uuid}',
+        summary: 'Update a category',
+        tags: ['Categories'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'uuid', in: 'path', schema: new OA\Schema(type: 'string'), required: true),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'title', example: 'Test category'),
+                ]
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'OK'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 404, description: 'Not found'),
+            new OA\Response(response: 422, description: 'Unprocessed entity'),
+        ]
+    )]
     public function update(Category $category, StoreCategoryRequest $request)
     {
         $category->update($request->validated());
@@ -105,6 +128,20 @@ class CategoryController extends Controller
         return CategoryResource::make($category->fresh());
     }
 
+    #[OA\Delete(
+        path: '/api/v1/category/{uuid}',
+        summary: 'Delete a category',
+        tags: ['Categories'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'uuid', in: 'path', schema: new OA\Schema(type: 'string'), required: true),
+        ],
+        responses: [
+            new OA\Response(response: 204, description: 'No content'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 404, description: 'Not found'),
+        ]
+    )]
     public function destroy(Category $category)
     {
         $category->delete();
