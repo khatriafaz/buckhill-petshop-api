@@ -2,11 +2,14 @@
     "openapi": "3.0.0",
     "info": {
         "title": "Petshop API Documentation",
-        "version": "1.0.0"
+        "version": "0.0.1"
     },
     "paths": {
         "/api/v1/products": {
             "get": {
+                "tags": [
+                    "Products"
+                ],
                 "operationId": "7ca3593d05653d957ae7be1ac648ca44",
                 "responses": {
                     "200": {
@@ -15,5 +18,11 @@
                 }
             }
         }
-    }
+    },
+    "tags": [
+        {
+            "name": "Products",
+            "description": "Products API endpoints"
+        }
+    ]
 }

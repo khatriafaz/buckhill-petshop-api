@@ -8,15 +8,21 @@ use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
+use OpenApi\Attributes as OA;
 
+#[OA\Tag(
+    name: 'Products',
+    description: 'Products API endpoints'
+)]
 class ProductController extends Controller
 {
-    /**
-     * @OA\Get(
-     *     path="/api/v1/products",
-     *     @OA\Response(response="200", description="List products")
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/products',
+        tags: ['Products'],
+        responses: [
+            new OA\Response(response: 200, description: 'List products')
+        ]
+    )]
     public function index(ProductFilterRequest $request)
     {
         $products = Product::query()->with('category')
