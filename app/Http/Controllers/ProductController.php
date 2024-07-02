@@ -105,6 +105,35 @@ class ProductController extends Controller
         return ProductResource::make($product);
     }
 
+    #[OA\Put(
+        path: '/api/v1/product/{uuid}',
+        summary: 'Update a product',
+        tags: ['Products'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'uuid', in: 'path', schema: new OA\Schema(type: 'string'), required: true),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'category_uuid', example: ''),
+                    new OA\Property(property: 'title', example: 'Test product'),
+                    new OA\Property(property: 'price', example: 299.99),
+                    new OA\Property(property: 'description', example: 'A product description'),
+                    new OA\Property(property: 'metadata', properties: [
+                        new OA\Property(property: 'brand', example: '')
+                    ])
+                ]
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'OK'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 404, description: 'Not found'),
+            new OA\Response(response: 422, description: 'Unprocessed entity'),
+        ]
+    )]
     public function update(Product $product, UpdateProductRequest $request)
     {
         $product->update($request->validated());
