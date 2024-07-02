@@ -51,6 +51,19 @@ class FileController extends Controller
         ]);
     }
 
+    #[OA\Get(
+        path: '/api/v1/file/{uuid}',
+        summary: 'Download a file',
+        tags: ['Files'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'uuid', in: 'path', schema: new OA\Schema(type: 'string'), required: true),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'OK'),
+            new OA\Response(response: 404, description: 'Not found'),
+        ]
+    )]
     public function show(File $file)
     {
         return Storage::disk('pet-shop')->download($file->path, $file->name);
