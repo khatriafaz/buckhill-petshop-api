@@ -31,15 +31,17 @@
                         "name": "sort_by[field]",
                         "in": "query",
                         "description": "Sort field",
+                        "required": false,
                         "schema": {
                             "type": "string"
                         },
-                        "example": "created_at"
+                        "example": "price"
                     },
                     {
                         "name": "sort_by[direction]",
                         "in": "query",
                         "description": "Sort direction",
+                        "required": false,
                         "schema": {
                             "type": "string"
                         },
@@ -52,8 +54,55 @@
                     },
                     "401": {
                         "description": "Unauthorized"
+                    },
+                    "422": {
+                        "description": "Unprocessed entity"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/product/{uuid}": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Fetch a product",
+                "operationId": "2ff81043cefbed5f9cb8596450eaa36f",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not found"
                     }
                 }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
             }
         }
     },

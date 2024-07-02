@@ -19,7 +19,11 @@
                     SwaggerUIBundle.presets.apis,
                     SwaggerUIStandalonePreset
                 ],
-                layout: "StandaloneLayout"
+                layout: "StandaloneLayout",
+                requestInterceptor: function(request) {
+                    request.headers['accept'] = 'application/json';
+                    return request;
+                },
             })
             window.ui = ui
         }
