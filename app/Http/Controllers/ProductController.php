@@ -141,6 +141,20 @@ class ProductController extends Controller
         return ProductResource::make($product->refresh());
     }
 
+    #[OA\Delete(
+        path: '/api/v1/product/{uuid}',
+        summary: 'Delete a product',
+        tags: ['Products'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'uuid', in: 'path', schema: new OA\Schema(type: 'string'), required: true),
+        ],
+        responses: [
+            new OA\Response(response: 204, description: 'No content'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 404, description: 'Not found'),
+        ]
+    )]
     public function destroy(Product $product)
     {
         $product->delete();
