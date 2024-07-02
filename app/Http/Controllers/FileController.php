@@ -5,9 +5,33 @@ namespace App\Http\Controllers;
 use App\Http\Requests\FileUploadRequest;
 use App\Models\File;
 use Illuminate\Support\Facades\Storage;
+use OpenApi\Attributes as OA;
 
+#[OA\Tag(
+    name: 'Files',
+    description: 'Files API endpoints'
+)]
 class FileController extends Controller
 {
+    #[OA\Post(
+        path: '/api/v1/file/upload',
+        summary: 'Upload a file',
+        tags: ['Files'],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            content: new OA\MediaType(
+                mediaType: 'multipart/form-data',
+                schema: new OA\Schema(properties: [
+                    new OA\Property(property: 'file', description: 'File to upload', type: 'file', format: 'binary')
+                ])
+            )
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'OK'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 422, description: 'Unprocessed entity'),
+        ],
+    )]
     public function store(FileUploadRequest $request)
     {
         $file = $request->file('file');
