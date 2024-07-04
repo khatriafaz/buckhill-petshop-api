@@ -30,7 +30,7 @@ Generate a JWT key and set the value in .env for `JWT_KEY` variable.
 Run migrations and seeders:
 
 ```sh
-php artisan migrate:fresh --seed
+php artisan migrate --seed
 ```
 
 A default user will be seeded with these credentials:
